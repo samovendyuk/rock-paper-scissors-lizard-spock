@@ -6,8 +6,9 @@ import PlayerMove from "./playerMove.js";
 
 const prompt = promptSync();
 const param = process.argv.slice(2);
+
 const createComputer = new Computer();
-const rules = new CheckRules();
+const rules = new CheckRules(param);
 const generatorHmac = new GenerateHmac();
 const playerEntry = new PlayerMove();
 let temp = "";
@@ -22,7 +23,7 @@ for (let i = 0; i < param.length; i++) {
 let availableMoves =
   "Available moves : " + "\n" + str + "0 - exit" + "\n" + "? - help";
 const computerMove = createComputer.getComputerChoice(param);
-const computerHmac = generatorHmac.getHmac(computerMove);
+const hmac = generatorHmac.getHmac(param[computerMove]);
 
 game(param);
 
@@ -43,21 +44,23 @@ function game(param) {
     return;
   }
 
-  console.log("Computer Hmac : " + computerHmac);
-  console.log(availableMoves);
-  const playerChoice = prompt("Enter your move: ");
-  const playerChoose = playerEntry.playerMove(playerChoice);
+  while (true) {
+    console.log("Hmac : " + hmac);
+    console.log(availableMoves);
+    const playerChoice = prompt("Enter your move: ");
+    const playerChoose = playerEntry.playerMove(playerChoice);
 
-  if (playerChoose === "") {
-    console.log("Game over");
-    return;
+    if (playerChoose === "") {
+      console.log("Game over");
+      return;
+    }
+
+    const playRound = rules.playRound(computerMove, +playerChoice - 1);
+    const hmacKey = generatorHmac.getKey();
+
+    console.log("Your move : " + playerChoose);
+    console.log("Computer move: " + param[computerMove]);
+    console.log(playRound);
+    console.log("HMAC key : " + hmacKey);
   }
-
-  const playRound = rules.playRound(playerChoose, computerMove);
-  const playerHmac = generatorHmac.getHmac(playerChoose);
-
-  console.log("Your move : " + playerChoose);
-  console.log("Computer move: " + computerMove);
-  console.log(playRound);
-  console.log("HMAC player : " + playerHmac);
 }
