@@ -3,18 +3,18 @@ import crypto from "crypto";
 class GenerateHmac {
   constructor(param) {
     this.param = param;
-    this.key = this.getKey();
+    this.key = crypto.randomBytes(32);
   }
 
   getKey() {
-    const key = crypto.randomBytes(32);
-    return key.toString("hex");
+    return this.key;
   }
 
   getHmac(param) {
-    const hmac = crypto.createHmac("sha256", this.key);
-    const decodeHmac = hmac.update(param).digest("hex");
-    return decodeHmac;
+    const hash = crypto.createHmac("sha256", this.key);
+    const hmac = param + this.key;
+    const decodeHash = hash.update(hmac).digest("hex");
+    return decodeHash;
   }
 }
 

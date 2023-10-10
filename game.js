@@ -11,6 +11,7 @@ const createComputer = new Computer();
 const rules = new CheckRules(param);
 const generatorHmac = new GenerateHmac();
 const playerEntry = new PlayerMove();
+
 let temp = "";
 let str = "";
 
@@ -56,7 +57,7 @@ function game(param) {
     }
 
     const playRound = rules.playRound(computerMove, +playerChoice - 1);
-    const hmacKey = generatorHmac.getKey();
+    const hmacKey = generatorHmac.getKey().toString("hex");
 
     console.log("Your move : " + playerChoose);
     console.log("Computer move: " + param[computerMove]);
